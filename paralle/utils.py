@@ -5,11 +5,11 @@ from PIL import Image
 import numpy as np
 import cv2
 import urllib
-import datetime
 
 #device id served
 INSTANT_ID_DEV = [
-    '192.168.2.231:8001'
+    '192.168.2.231:8001',
+    '192.168.2.233:8188'
 ]
 INPAINTING_DEV = [
     '192.168.2.231:8101'

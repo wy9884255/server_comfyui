@@ -14,6 +14,7 @@ app = FastAPI()
 
 @app.post('/request_in')
 def call_diffusion(param: Parameter):
+    param.id = str(param.id)
     data_json = json.dumps(param.dict())
     data_json_str = json.dumps(data_json,ensure_ascii=False).encode('utf-8').decode()
     time_str = datetime.now().strftime("%H%M%S%f")

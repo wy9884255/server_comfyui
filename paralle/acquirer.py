@@ -1,18 +1,22 @@
 import json
 from datetime import datetime, timedelta
 import time
+import requests
+from PIL import Image
+import io
 
 from log import Log
 import comfy_api as ComfyAPI
 from RedisInterface import RedisInterface
+from utils import ImageUtils
 RedisInterface.init_redis()
 log = Log()
 class ResultAcquirer():
     @classmethod
     def get_result(self):
         request_key = "comfyui:queued_prompt"
-        #delete data 3 min ago
-        five_minutes_ago = (datetime.now() - timedelta(minutes=3)).strftime("%H%M%S%f")
+        #delete data 2 min ago
+        five_minutes_ago = (datetime.now() - timedelta(minutes=2)).strftime("%H%M%S%f")
         float_time = float(five_minutes_ago[:-3] + '.' + five_minutes_ago[-3:])
         RedisInterface.COMFYUI_DB.zremrangebyscore(request_key, 0, float_time)
         prompt_datas = RedisInterface.COMFYUI_DB.zrange(request_key, 0, -1)
@@ -29,9 +33,9 @@ class ResultAcquirer():
                 model = data_dict['model']
                 result_id = -1
                 queue_time = int(data_dict['queue_time'])
-                if model == 'comfy_instantid_anime':
-                    result_id = 98
-                elif model == 'comfy_inpainting':
+                if model == 'instantid':
+                    result_id = 121
+                elif model == 'inpainting':
                     result_id = 994
                     
                 send_data = {}
@@ -49,15 +53,17 @@ class ResultAcquirer():
                         "message": "Generate error, time exceed!"
                     } 
                 else:
+                    image = Image.open(io.BytesIO(ret[0]))
+                    image = ImageUtils.pil_base64(image)
                     send_data = {
                         "id":id,
-                        "images": [ret],
+                        "images": [image],
                         "success": True,
                         "message": "Success"
                     }
                 print(f"acquirer done on {prompt_id} model {model} duration={elapsed_time}s")
-                log.output_logs(f"ComfyUI inpainting finished on prompt_id = {prompt_id}, server = {ip_address} duration={elapsed_time}s")
-                #return_data = requests.post(notifyUrl, json=send_data)
+                log.output_logs(f"ComfyUI {model} finished on prompt_id = {prompt_id}, server = {ip_address} duration={elapsed_time}s")
+                return_data = requests.post(notifyUrl, json=send_data)
                 RedisInterface.COMFYUI_DB.zrem(request_key, key)
     
 if __name__ == "__main__":

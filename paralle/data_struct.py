@@ -1,9 +1,22 @@
 from typing import Optional, List
 from pydantic import BaseModel
 
+class ImageFilter(BaseModel):
+    brightness:Optional[float] = 0.0
+    contrast:Optional[float] = 1.0
+    saturation:Optional[float] = 1.0
+    sharpness:Optional[float] = 1.0
+    blur:Optional[float] = 0.0
+    gaussian_blur:Optional[float] = 0.0
+    edge_enhance:Optional[float] = 0.0
+    detail_enhance:Optional[int] = 0
+    temperature:Optional[int] = 0
+    hue:Optional[int] = 0
+    gamma:Optional[float] = 1.0
+    
 class Parameter(BaseModel):
-    id: Optional[str] = ""
     name:Optional[str] = ""
+    id:int
     action:str
     model:str
     prompt:str
@@ -15,9 +28,6 @@ class Parameter(BaseModel):
     negative_prompt:Optional[str] = None
     seed:Optional[int] = -1
     steps:Optional[int] = 20    
-    denoising_strength:Optional[float] = 0.75
-    cfg_scale:Optional[float] = 7
-    sampler_index:Optional[str] = 'Euler a'
     
     # Strategy
     face_ratio:Optional[float] = -1
@@ -34,5 +44,8 @@ class Parameter(BaseModel):
     instantid_weight:Optional[float] = 0.5
     control_weight:Optional[float] = 0.5
     daka:Optional[str] = ''
+    #ImageFilter
+    image_filter:Optional[ImageFilter] = None
+
 
     

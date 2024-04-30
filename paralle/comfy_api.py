@@ -10,8 +10,18 @@ import urllib.parse
 def queue_prompt(prompt, client_id, img_url, server_address):
     p = {"prompt": prompt, "client_id": client_id, "img_url":img_url}
     data = json.dumps(p).encode('utf-8')
-    req =  urllib.request.Request("http://{}/prompt".format(server_address), data=data)
-    return json.loads(urllib.request.urlopen(req).read())
+    url = "http://{}/prompt".format(server_address)
+    try:
+        req = urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        if response.getcode() == 200:  # Check if the response code is 200 (OK)
+            return json.loads(response.read())
+        else:
+            print("Request failed with response code:", response.getcode())
+            return ""
+    except urllib.error.HTTPError as e:
+        print("HTTP Error:", e.code, e.reason)
+        return ""
 
 def get_image(filename, subfolder, folder_type, server_address):
     data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
@@ -20,13 +30,26 @@ def get_image(filename, subfolder, folder_type, server_address):
         return response.read()
 
 def get_history(prompt_id, server_address):
-    with urllib.request.urlopen("http://{}/history/{}".format(server_address, prompt_id)) as response:
-        return json.loads(response.read())
+    try:
+        url = "http://{}/history/{}".format(server_address, prompt_id)
+        with urllib.request.urlopen(url) as response:
+            if response.getcode() == 200:  # Check if the response code is 200 (OK)
+                return json.loads(response.read())
+            else:
+                print("Request failed with response code:", response.getcode())
+                return ""
+    except urllib.error.HTTPError as e:
+        print("HTTP Error:", e.code, e.reason)
+        return ""
       
 def get_queue(server_address):
-    with urllib.request.urlopen("http://{}/queue".format(server_address)) as response:
-        return json.loads(response.read())
-      
+    try:
+        with urllib.request.urlopen("http://{}/queue".format(server_address)) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as e:
+        print("HTTP Error:", e.code, e.reason)
+        return ""
+        
 def post_interrupt(server_address):
     with urllib.request.urlopen("http://{}/interrupt".format(server_address)) as response:
         return json.loads(response.read())
@@ -34,7 +57,7 @@ def post_interrupt(server_address):
 def get_result(prompt_id, result_id, server_address):
     output_images = {}
     history = get_history(prompt_id, server_address)
-    if prompt_id not in history.keys():
+    if history == "" or prompt_id not in history.keys():
        return "" 
     history = history[prompt_id]
     for o in history['outputs']:

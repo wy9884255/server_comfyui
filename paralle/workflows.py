@@ -310,6 +310,367 @@ workflow1 = """
   }
 }
 """
+workflow3 = """
+{
+  "3": {
+    "inputs": {
+      "seed": 773651641087417,
+      "steps": 4,
+      "cfg": 2,
+      "sampler_name": "dpmpp_sde",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": [
+        "60",
+        0
+      ],
+      "positive": [
+        "91",
+        0
+      ],
+      "negative": [
+        "91",
+        1
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "juggernautXL_v9Rdphoto2Lightning.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": 856,
+      "height": 1328,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "96",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "11": {
+    "inputs": {
+      "instantid_file": "ip-adapter.bin"
+    },
+    "class_type": "InstantIDModelLoader",
+    "_meta": {
+      "title": "Load InstantID Model"
+    }
+  },
+  "13": {
+    "inputs": {
+      "image": "nan.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "16": {
+    "inputs": {
+      "control_net_name": "diffusion_pytorch_model.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "38": {
+    "inputs": {
+      "provider": "CUDA"
+    },
+    "class_type": "InstantIDFaceAnalysis",
+    "_meta": {
+      "title": "InstantID Face Analysis"
+    }
+  },
+  "39": {
+    "inputs": {
+      "text": "((masterpiece)),((best quality)),(phot-relistic:1.4),8k,asterpiece, best quality,1man, Look at the camera，Relying on branches, (monochrome), (greyscale),(ink splash), strong contrast, 2D, Line draft, Chinese traditional Painting, (White face), bamboo forest，rock, liujiyou, QiBaishi, Wuguanzhong, meticulous fine brushwork,Clothing of the Song Dynasty,dot ink,cheongsam",
+      "clip": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "40": {
+    "inputs": {
+      "text": "naked,NSFW,lowres,(low quality:1.3),(worst quality:1.3),(monochrome:0.8),(deformed:1.3),(malformed hands:1.4),(poorly drawn hands:1.4),(mutated fingers:1.4),(bad anatomy:1.3),(extra limbs:1.35),(poorly drawn face:1.4),(signature:1.2),(artist name:1.2),(watermark:1.2),(beard:0.2),body hair,(big chest),bad hands,multiple hands,(hand:2),green hat,green hair belt,Inscription, font, ink on skin, letter,red face,pink face，yellow face, red lips，calligraphy,colour of skin，red tune",
+      "clip": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "60": {
+    "inputs": {
+      "weight": 0.8,
+      "start_at": 0,
+      "end_at": 1,
+      "instantid": [
+        "11",
+        0
+      ],
+      "insightface": [
+        "38",
+        0
+      ],
+      "control_net": [
+        "16",
+        0
+      ],
+      "image": [
+        "13",
+        0
+      ],
+      "model": [
+        "107",
+        0
+      ],
+      "positive": [
+        "39",
+        0
+      ],
+      "negative": [
+        "40",
+        0
+      ],
+      "image_kps": [
+        "125",
+        0
+      ]
+    },
+    "class_type": "ApplyInstantID",
+    "_meta": {
+      "title": "Apply InstantID"
+    }
+  },
+  "84": {
+    "inputs": {
+      "low_threshold": 100,
+      "high_threshold": 200,
+      "resolution": 512,
+      "image": [
+        "125",
+        0
+      ]
+    },
+    "class_type": "CannyEdgePreprocessor",
+    "_meta": {
+      "title": "Canny Edge"
+    }
+  },
+  "91": {
+    "inputs": {
+      "strength": 0.2,
+      "start_percent": 0,
+      "end_percent": 0.5,
+      "positive": [
+        "60",
+        1
+      ],
+      "negative": [
+        "60",
+        2
+      ],
+      "control_net": [
+        "100",
+        0
+      ],
+      "image": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {
+      "title": "Apply ControlNet (Advanced)"
+    }
+  },
+  "96": {
+    "inputs": {
+      "vae_name": "sdxl_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "97": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": [
+        "107",
+        1
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "CLIP Set Last Layer"
+    }
+  },
+  "100": {
+    "inputs": {
+      "control_net_name": "control-lora-canny-rank256.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "106": {
+    "inputs": {
+      "switch_1": "Off",
+      "lora_name_1": "None",
+      "model_weight_1": 0.5,
+      "clip_weight_1": 1,
+      "switch_2": "Off",
+      "lora_name_2": "None",
+      "model_weight_2": 0.8,
+      "clip_weight_2": 1,
+      "switch_3": "Off",
+      "lora_name_3": "None",
+      "model_weight_3": 0.8,
+      "clip_weight_3": 1
+    },
+    "class_type": "CR LoRA Stack",
+    "_meta": {
+      "title": "💊 CR LoRA Stack"
+    }
+  },
+  "107": {
+    "inputs": {
+      "model": [
+        "4",
+        0
+      ],
+      "clip": [
+        "4",
+        1
+      ],
+      "lora_stack": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack",
+    "_meta": {
+      "title": "💊 CR Apply LoRA Stack"
+    }
+  },
+  "110": {
+    "inputs": {
+      "images": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "111": {
+    "inputs": {
+      "brightness": 0,
+      "contrast": 1,
+      "saturation": 1,
+      "sharpness": 1,
+      "blur": 0,
+      "gaussian_blur": 0,
+      "edge_enhance": 0,
+      "detail_enhance": "false",
+      "image": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Image Filter Adjustments",
+    "_meta": {
+      "title": "Image Filter Adjustments"
+    }
+  },
+  "119": {
+    "inputs": {
+      "temperature": 0,
+      "hue": 0,
+      "brightness": 0,
+      "contrast": 0,
+      "saturation": 0,
+      "gamma": 1,
+      "image": [
+        "111",
+        0
+      ]
+    },
+    "class_type": "ColorCorrect",
+    "_meta": {
+      "title": "Color Correct"
+    }
+  },
+  "121": {
+    "inputs": {
+      "images": [
+        "119",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "125": {
+    "inputs": {
+      "image": "nan.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  }
+}
+"""
 # inpainting
 workflow2 = """
 
